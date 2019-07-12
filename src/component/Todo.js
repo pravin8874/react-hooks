@@ -1,15 +1,24 @@
 import React, { useState } from "react";
 
 const Todo = props => {
-  const [todoName, setTodoName] = useState("");
-  const [todoList, setTodoList] = useState([]);
+  const [todoState, setTodoState] = useState({ todoName: "", todoList: [] });
 
   const inputChangeHandler = e => {
-    setTodoName(e.target.value);
+    updateState(e.target.value);
   };
 
   const todoListHandler = () => {
-    setTodoList(todoList.concat(todoName));
+    updateState(undefined, todoState.todoList.concat(todoState.todoName));
+  };
+
+  const updateState = (
+    name = todoState.todoName,
+    list = todoState.todoList
+  ) => {
+    setTodoState({
+      todoName: name,
+      todoList: list
+    });
   };
 
   return (
@@ -18,14 +27,14 @@ const Todo = props => {
         type="text"
         placeholder="Todo"
         onChange={inputChangeHandler}
-        value={todoName}
+        value={todoState.todoName}
       />
       <button type="button" onClick={todoListHandler}>
         Add
       </button>
       <ul>
-        {todoList.map(todo => (
-          <li>{todo}</li>
+        {todoState.todoList.map(todo => (
+          <li key={todo}>{todo}</li>
         ))}
       </ul>
     </>

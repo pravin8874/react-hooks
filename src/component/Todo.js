@@ -1,14 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Todo = props => {
   const [todoState, setTodoState] = useState({ todoName: "", todoList: [] });
+
+  useEffect(() => {
+    axios
+      .get("https://react-hooks-66a58.firebaseio.com/todos.json")
+      .then(result => {
+        const todos = [];
+        for (const key in result.data) {
+          todos.push({ id: key, name: result.data[key].name });
+        }
+        updateState(undefined, todos);
+      })
+      .catch(err => {
+        console.log("[Error]", err);
+      });
+  }, todoState);
 
   const inputChangeHandler = e => {
     updateState(e.target.value);
   };
 
   const todoListHandler = () => {
-    updateState(undefined, todoState.todoList.concat(todoState.todoName));
+    axios
+      .post("https://react-hooks-66a58.firebaseio.com/todos.json", {
+        name: todoState.todoName
+      })
+      .then(res => {
+        updateState(
+          undefined,
+          todoState.todoList.concat({
+            id: res.data.name,
+            name: todoState.todoName
+          })
+        );
+        console.log("Todo Added", res);
+      })
+      .catch(err => {
+        console.log("Error", err);
+      });
   };
 
   const updateState = (
@@ -34,7 +66,7 @@ const Todo = props => {
       </button>
       <ul>
         {todoState.todoList.map(todo => (
-          <li key={todo}>{todo}</li>
+          <li key={todo.id}>{todo.name}</li>
         ))}
       </ul>
     </>

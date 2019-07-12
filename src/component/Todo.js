@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
 const Todo = props => {
-  const inputState = useState("");
+  const [todoState, setTodoState] = useState("");
 
   const inputChangeHandler = e => {
-    inputState[1](e.target.value);
+    setTodoState(e.target.value);
   };
 
   return (
@@ -13,9 +13,9 @@ const Todo = props => {
         type="text"
         placeholder="Todo"
         onChange={inputChangeHandler}
-        value={inputState[0]}
+        value={todoState}
       />
-      <span>{inputState[0]}</span>
+      <span>{todoState}</span>
     </>
   );
 };

@@ -1,13 +1,13 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import axios from "axios";
 
 const todoStateReducer = (state, action) => {
   switch (action.type) {
-    case "UPDATE_TODO_NAME":
-      return {
-        ...state,
-        todoName: action.payload
-      }
+    // case "UPDATE_TODO_NAME":
+    //   return {
+    //     ...state,
+    //     todoName: action.payload
+    //   }
     case "ADD":
       return {
         ...state,
@@ -30,7 +30,8 @@ const todoStateReducer = (state, action) => {
 
 const Todo = props => {
   // const [todoState, setTodoState] = useState({ todoName: "", todoList: [] });
-  const [state, dispatch] = useReducer(todoStateReducer, { todoName: "", todoList: [] })
+  const [state, dispatch] = useReducer(todoStateReducer, { todoList: [] })
+  const todoInputRef = useRef();
 
   useEffect(() => {
     axios
@@ -49,21 +50,22 @@ const Todo = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, state);
 
-  const inputChangeHandler = e => {
-    dispatch({ type: 'UPDATE_TODO_NAME', payload: e.target.value })
-    // updateState(e.target.value);
-  };
+  // const inputChangeHandler = e => {
+  //   dispatch({ type: 'UPDATE_TODO_NAME', payload: e.target.value })
+  //   // updateState(e.target.value);
+  // };
 
   const todoListHandler = () => {
+    const todoName = todoInputRef.current.value;
     axios
       .post("https://react-hooks-66a58.firebaseio.com/todos.json", {
-        name: state.todoName
+        name: todoName
       })
       .then(res => {
         dispatch({
           type: 'ADD', payload: {
             id: res.data.name,
-            name: state.todoName
+            name: todoName
           }
         })
         // updateState(
@@ -94,8 +96,7 @@ const Todo = props => {
       <input
         type="text"
         placeholder="Todo"
-        onChange={inputChangeHandler}
-        value={state.todoName}
+        ref={todoInputRef}
       />
       <button type="button" onClick={todoListHandler}>
         Add

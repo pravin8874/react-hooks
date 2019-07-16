@@ -1,13 +1,9 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef, useMemo } from "react";
 import axios from "axios";
+import List from "./List";
 
 const todoStateReducer = (state, action) => {
   switch (action.type) {
-    // case "UPDATE_TODO_NAME":
-    //   return {
-    //     ...state,
-    //     todoName: action.payload
-    //   }
     case "ADD":
       return {
         ...state,
@@ -50,11 +46,6 @@ const Todo = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, state);
 
-  // const inputChangeHandler = e => {
-  //   dispatch({ type: 'UPDATE_TODO_NAME', payload: e.target.value })
-  //   // updateState(e.target.value);
-  // };
-
   const todoListHandler = () => {
     const todoName = todoInputRef.current.value;
     axios
@@ -68,28 +59,11 @@ const Todo = props => {
             name: todoName
           }
         })
-        // updateState(
-        //   undefined,
-        //   todoState.todoList.concat({
-        //     id: res.data.name,
-        //     name: todoState.todoName
-        //   })
-        // );
       })
       .catch(err => {
         console.log("Error", err);
       });
   };
-
-  // const updateState = (
-  //   name = todoState.todoName,
-  //   list = todoState.todoList
-  // ) => {
-  //   setTodoState({
-  //     todoName: name,
-  //     todoList: list
-  //   });
-  // };
 
   return (
     <>
@@ -101,11 +75,7 @@ const Todo = props => {
       <button type="button" onClick={todoListHandler}>
         Add
       </button>
-      <ul>
-        {state.todoList.map(todo => (
-          <li key={todo.id}>{todo.name}</li>
-        ))}
-      </ul>
+      {useMemo(() => <List todoList={state.todoList} />, [state.todoList])}
     </>
   );
 };
